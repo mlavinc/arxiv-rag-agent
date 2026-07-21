@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app.schemas.search import SearchRequest, SearchResponse
+from app.services.rag.rag_service import rag_service
 
 router = APIRouter()
 
@@ -11,7 +12,4 @@ router = APIRouter()
     summary="Search indexed ArXiv papers"
 )
 def search(request: SearchRequest) -> SearchResponse:
-    return SearchResponse(
-        answer="Search endpoint is working. RAG pipeline not implemented yet.",
-        sources=[]
-    )
+    return rag_service.search(request.question)
