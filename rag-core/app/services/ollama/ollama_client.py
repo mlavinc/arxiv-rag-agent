@@ -20,4 +20,15 @@ class OllamaClient:
             await self.list_models()
             return True
         except Exception:
-            return False
+            return False         
+    async def generate_embedding(self, text: str) -> list[float]:
+        response = await self.client.post(
+            "/api/embed",
+            json={
+                "model": settings.OLLAMA_EMBEDDING_MODEL,
+                "input": text,
+            },
+        )
+    
+        response.raise_for_status()
+        return response.json()["embeddings"][0]

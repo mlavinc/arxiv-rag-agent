@@ -9,15 +9,15 @@ class RAGService:
     Handles the RAG pipeline orchestration.
     """
 
-    def search(self, question: str) -> SearchResponse:
+    async def search(self, question: str) -> SearchResponse:
         # Step 1: Generate embedding
-        embedding = embeddings_service.embed(question)
+        embedding = await embeddings_service.embed(question)
 
         # Step 2: Search relevant documents
-        context = vector_db_service.search(embedding)
+        context = await vector_db_service.search(embedding)
 
         # Step 3: Generate final answer
-        answer = llm_service.generate(question, context)
+        answer = await llm_service.generate(question, context)
 
         return SearchResponse(
             answer=answer,

@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "ArXiv RAG Agent"
     VERSION: str = "1.0.0"
     API_PREFIX: str = "/api/v1"
-    OLLAMA_BASE_URL: str = "http://localhost:11434"
+    OLLAMA_BASE_URL: str = "http://127.0.0.1:11434"
     OLLAMA_LLM_MODEL: str = "qwen2.5:3b"
     OLLAMA_EMBEDDING_MODEL: str = "nomic-embed-text"
 

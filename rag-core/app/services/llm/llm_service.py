@@ -4,7 +4,7 @@ class LLMService:
     Placeholder implementation.
     """
 
-    def generate(self, question: str, context: list) -> str:
+    async def generate(self, question: str, context: list) -> str:
         return "LLM placeholder response."
 
 

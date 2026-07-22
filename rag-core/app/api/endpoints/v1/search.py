@@ -11,5 +11,5 @@ router = APIRouter()
     response_model=SearchResponse,
     summary="Search indexed ArXiv papers"
 )
-def search(request: SearchRequest) -> SearchResponse:
-    return rag_service.search(request.question)
+async def search(request: SearchRequest) -> SearchResponse:
+    return await rag_service.search(request.question)
