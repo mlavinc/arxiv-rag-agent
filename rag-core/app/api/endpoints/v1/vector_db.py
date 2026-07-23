@@ -12,7 +12,13 @@ router = APIRouter()
 async def get_vector_db_count():
     count = await vector_db_service.count()
     return {"documents": count}
-
+@router.get(
+    "/vector-db/peek",
+    summary="Inspect stored vectors metadata"
+)
+async def peek_vector_db():
+    return await vector_db_service.peek()
+    
 @router.post(
     "/vector-db/populate",
     summary="Insert demo documents into the vector database"
@@ -43,7 +49,7 @@ async def populate_vector_db():
     embeddings=embeddings,
     metadatas=metadatas,
     )
-    
+
     return {
     "message": "Demo documents inserted successfully.",
     "documents": len(documents),

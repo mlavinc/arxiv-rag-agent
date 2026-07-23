@@ -45,4 +45,11 @@ class VectorDBService:
     async def count(self) -> int:
         return self.collection.count()
 
+    async def peek(self):
+        results = self.collection.peek()
+        return {
+            "ids": results["ids"],
+            "documents": results["documents"],
+            "metadatas": results["metadatas"],
+        }
 vector_db_service = VectorDBService()
