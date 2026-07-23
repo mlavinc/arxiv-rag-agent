@@ -1,11 +1,19 @@
+import logging
+
 import chromadb
+
 from app.core.config import settings
+
+
+logger = logging.getLogger(__name__)
+
 
 class VectorDBService:
     def __init__(self):
         self.client = chromadb.PersistentClient(
             path=settings.CHROMA_PATH,
         )
+
         self.collection = self.client.get_or_create_collection(
             name=settings.CHROMA_COLLECTION,
             metadata={"hnsw:space": "cosine"},
@@ -25,31 +33,67 @@ class VectorDBService:
             metadatas=metadatas,
         )
 
-    async def search(self, embedding: list[float], n_results: int = 3) -> list[dict]:
+    async def search(
+        self,
+        embedding: list[float],
+        n_results: int = 3,
+    ) -> list[dict]:
         results = self.collection.query(
             query_embeddings=[embedding],
-            n_results=n_results,
+            n_results=settings.RAG_TOP_K,
         )
-        documents = []
-        for idx in range(len(results["ids"][0])):
-            documents.append(
-                {
-                    "id": results["ids"][0][idx],
-                    "document": results["documents"][0][idx],
-                    "metadata": results["metadatas"][0][idx],
-                    "score": results["distances"][0][idx],
-                }
+
+        documents = results["documents"][0]
+        metadatas = results["metadatas"][0]
+        distances = results["distances"][0]
+
+        logger.info(
+            "Retrieved %s candidate chunks from ChromaDB",
+            len(documents),
+        )
+
+        chunks = []
+
+        for document, metadata, distance in zip(
+            documents,
+            metadatas,
+            distances,
+        ):
+            accepted = distance <= settings.RAG_MIN_SCORE
+
+            logger.debug(
+                "Chunk distance: %.4f | Accepted: %s",
+                distance,
+                accepted,
             )
-        return documents
+
+            if accepted:
+                chunks.append(
+                    {
+                        "document": document,
+                        "metadata": metadata,
+                        "score": distance,
+                    }
+                )
+
+        logger.info(
+            "Returning %s relevant chunks after filtering",
+            len(chunks),
+        )
+
+        return chunks
 
     async def count(self) -> int:
         return self.collection.count()
 
     async def peek(self):
         results = self.collection.peek()
+
         return {
             "ids": results["ids"],
             "documents": results["documents"],
             "metadatas": results["metadatas"],
         }
+
+
 vector_db_service = VectorDBService()
