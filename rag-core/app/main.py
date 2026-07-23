@@ -4,6 +4,7 @@ from app.api.endpoints.v1.health import router as health_router
 from app.api.endpoints.v1.search import router as search_router
 from app.api.endpoints.v1.ollama import router as ollama_router
 from app.api.endpoints.v1.vector_db import router as vector_db_router
+from app.api.endpoints.v1.arxiv import router as arxiv_router
 
 def create_app() -> FastAPI:
     """Create a FastAPI application instance."""
@@ -16,6 +17,7 @@ def create_app() -> FastAPI:
     app.include_router(search_router, prefix=settings.API_PREFIX, tags=["search"])
     app.include_router(ollama_router, prefix=settings.API_PREFIX, tags=["ollama"])
     app.include_router(vector_db_router, prefix=settings.API_PREFIX, tags=["vector-db"])
+    app.include_router(arxiv_router, prefix=settings.API_PREFIX, tags=["arxiv"])
     @app.get("/")
     async def root():
         return {
