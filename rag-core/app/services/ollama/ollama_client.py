@@ -29,6 +29,18 @@ class OllamaClient:
                 "input": text,
             },
         )
-    
         response.raise_for_status()
         return response.json()["embeddings"][0]
+
+    async def generate(self, prompt: str) -> str:
+        response = await self.client.post(
+            "/api/generate",
+            json={
+                "model": settings.OLLAMA_LLM_MODEL,
+                "prompt": prompt,
+                "stream": False,
+            },
+        )
+
+        response.raise_for_status()
+        return response.json()["response"]

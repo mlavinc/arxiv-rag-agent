@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Body
 
 from app.services.ingestion.ingestion_service import ingestion_service
 
@@ -12,15 +12,12 @@ router = APIRouter()
 )
 async def ingest_pdf(
     file_path: str,
+    metadata: dict = Body(default={}),
 ):
 
     result = await ingestion_service.ingest_pdf(
         file_path=file_path,
-        metadata={
-            "source": "arxiv",
-            "paper_id": "2201.00978",
-            "title": "PyramidTNT: Improved Transformer-in-Transformer Baselines with Pyramid Architecture",
-        },
+        metadata=metadata,
     )
 
     return result

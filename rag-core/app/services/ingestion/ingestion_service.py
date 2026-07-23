@@ -1,4 +1,3 @@
-from app.services.document.pdf_downloader_service import pdf_downloader_service
 from app.services.document.pdf_parser_service import pdf_parser_service
 from app.services.document.chunking_service import chunking_service
 from app.services.embeddings.embeddings_service import embeddings_service
@@ -36,10 +35,10 @@ class IngestionService:
             embeddings.append(embedding)
 
         # 4. Prepare vector documents
-        paper_id = metadata.get("paper_id", "unknown")
+        document_id = metadata.get("document_id", "unknown")
 
         ids = [
-            f"{paper_id}_chunk_{i}"
+            f"{document_id}_chunk_{i}"
             for i in range(len(chunks))
         ]
 

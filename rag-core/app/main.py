@@ -13,7 +13,7 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title=settings.PROJECT_NAME,
         version=settings.VERSION,
-        description="An agentic RAG system for the ArXiv dataset.",
+        description="An agentic RAG system for querying knowledge documents.",
     )
     app.include_router(health_router, prefix=settings.API_PREFIX, tags=["health"])
     app.include_router(search_router, prefix=settings.API_PREFIX, tags=["search"])

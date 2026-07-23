@@ -11,8 +11,9 @@ class SearchRequest(BaseModel):
 
 
 class Source(BaseModel):
+    document_id: str
     title: str
-    paper_id: str
+    chunk_index: int
     score: float
 
 

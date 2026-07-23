@@ -1,8 +1,5 @@
 from fastapi import APIRouter
 
-from app.services.document.pdf_downloader_service import (
-    pdf_downloader_service
-)
 from app.services.document.pdf_parser_service import (
     pdf_parser_service
 )
@@ -14,19 +11,6 @@ from app.services.document.chunking_service import (
 router = APIRouter()
 
 
-@router.post(
-    "/documents/download",
-    summary="Download arXiv paper PDF"
-)
-async def download_pdf(paper_id: str):
-
-    path = await pdf_downloader_service.download(
-        paper_id
-    )
-
-    return {
-        "file": path
-    }
 @router.get(
     "/documents/extract",
     summary="Extract text from PDF"

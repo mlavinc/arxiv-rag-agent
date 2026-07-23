@@ -1,7 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "ArXiv RAG Agent"
+    PROJECT_NAME: str = "Knowledge RAG Agent"
     VERSION: str = "1.0.0"
     API_PREFIX: str = "/api/v1"
 
@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     OLLAMA_EMBEDDING_MODEL: str = "nomic-embed-text"
 
     CHROMA_PATH: str = "./chroma_db"
-    CHROMA_COLLECTION: str = "arxiv_papers"
+    CHROMA_COLLECTION: str = "documents"
 
     model_config = SettingsConfigDict(
         env_file=".env",
