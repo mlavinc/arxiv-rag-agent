@@ -1,9 +1,38 @@
+import chromadb
+from app.core.config import settings
+
 class VectorDBService:
-    """
-    Handles the vector database operations.
-    Placeholder for now.
-    """
-    async def search(self, embedding: list[float]) -> list[dict]:
-        return []
+    def __init__(self):
+        self.client = chromadb.PersistentClient(
+            path=settings.CHROMA_PATH,
+        )
+        self.collection = self.client.get_or_create_collection(
+            name=settings.CHROMA_COLLECTION,
+            metadata={"hnsw:space": "cosine"},
+        )
+
+    async def add_documents(
+        self,
+        ids: list[str],
+        documents: list[str],
+        embeddings: list[list[float]],
+        metadatas: list[dict[str, str]],
+    ) -> None:
+        self.collection.add(
+            ids=ids,
+            documents=documents,
+            embeddings=embeddings,
+            metadatas=metadatas,
+        )
+
+    async def search(self, embedding: list[float], n_results: int = 3) -> dict:
+        results = self.collection.query(
+            query_embeddings=[embedding],
+            n_results=n_results,
+        )
+        return results
+
+    async def count(self) -> int:
+        return self.collection.count()
 
 vector_db_service = VectorDBService()
