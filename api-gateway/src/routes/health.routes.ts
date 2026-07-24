@@ -1,2 +1,12 @@
-// Health check route.
-// TODO: Define a GET /health endpoint to verify the API Gateway is running.
+import { Router } from "express";
+
+const router = Router();
+
+router.get("/health", (_req, res) => {
+  res.json({
+    status: "ok",
+    service: "api-gateway",
+  });
+});
+
+export default router;

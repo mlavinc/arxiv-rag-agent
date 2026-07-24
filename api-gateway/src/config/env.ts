@@ -1,3 +1,7 @@
-// Environment configuration.
-// TODO: Load environment variables using dotenv.
-// TODO: Expose typed, validated configuration (PORT, RAG_CORE_URL, etc.).
+import dotenv from "dotenv";
+
+dotenv.config();
+
+export const env = {
+  PORT: Number(process.env.PORT) || 3000,
+};

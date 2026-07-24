@@ -1,3 +1,6 @@
-// Entry point of the API Gateway.
-// TODO: Import the configured Express app from ./app.
-// TODO: Start the HTTP server listening on the configured port.
+import app from "./app";
+import { env } from "./config/env";
+
+app.listen(env.PORT, () => {
+  console.log(`API Gateway running on port ${env.PORT}`);
+});
