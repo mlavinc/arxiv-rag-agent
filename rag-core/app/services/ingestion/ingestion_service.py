@@ -1,5 +1,5 @@
 from app.services.document.pdf_parser_service import pdf_parser_service
-from app.services.document.chunking_service import chunking_service
+from app.services.chunking_service import chunking_service
 from app.services.embeddings.embeddings_service import embeddings_service
 from app.services.vector_db.vector_db_service import vector_db_service
 
@@ -27,11 +27,9 @@ class IngestionService:
             file_path
         )
 
-        text = parsed["text"]
-
         # 2. Split document into chunks
         chunks = chunking_service.split(
-            text
+            parsed["pages"]
         )
 
         embeddings = []
@@ -40,7 +38,7 @@ class IngestionService:
         for chunk in chunks:
 
             embedding = await embeddings_service.embed(
-                chunk
+                chunk["text"]
             )
 
             embeddings.append(
@@ -54,27 +52,23 @@ class IngestionService:
 
         # 4. Prepare Chroma documents
         ids = [
-            f"{document_id}_chunk_{index}"
-            for index in range(len(chunks))
+            f"{document_id}_chunk_{chunk['chunk_id']}"
+            for chunk in chunks
         ]
 
-        document_title = metadata.get(
-            "title",
-            metadata.get("filename", document_id)
-        )
         metadatas = [
             {
                 **metadata,
-                "title": document_title,
-                "chunk_index": index,
+                "chunk_index": chunk["chunk_id"],
+                "page_number": chunk["page_number"],
             }
-            for index in range(len(chunks))
+            for chunk in chunks
         ]
 
         # 5. Store vectors
         await vector_db_service.add_documents(
             ids=ids,
-            documents=chunks,
+            documents=[chunk["text"] for chunk in chunks],
             embeddings=embeddings,
             metadatas=metadatas,
         )

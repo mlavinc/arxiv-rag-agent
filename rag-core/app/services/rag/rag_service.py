@@ -16,10 +16,6 @@ class RAGService:
         # Step 2: Search relevant documents
         context = await vector_db_service.search(embedding)
 
-        print("=" * 80)
-        print(context)
-        print("=" * 80)
-
         # Si no hay contexto, no llamamos al LLM
         if not context:
             return SearchResponse(

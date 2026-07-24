@@ -5,7 +5,7 @@ from app.services.ingestion.ingestion_service import ingestion_service
 from app.services.document.pdf_parser_service import (
     pdf_parser_service
 )
-from app.services.document.chunking_service import (
+from app.services.chunking_service import (
     chunking_service
 )
 
@@ -33,7 +33,7 @@ async def get_chunks(file_path: str):
     parsed = pdf_parser_service.extract_text(file_path)
 
     chunks = chunking_service.split(
-        parsed["text"]
+        parsed["pages"]
     )
 
     return {

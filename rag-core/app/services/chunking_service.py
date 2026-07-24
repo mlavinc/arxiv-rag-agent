@@ -1,30 +1,43 @@
 class ChunkingService:
     """
-    Splits documents into smaller text chunks.
+    Splits PDF pages into smaller chunks.
     """
 
-    def __init__(
+    def split(
         self,
-        chunk_size: int = 500,
-        overlap: int = 50,
-    ):
-        self.chunk_size = chunk_size
-        self.overlap = overlap
+        pages: list[dict],
+        chunk_size: int = 1000,
+        overlap: int = 200,
+    ) -> list[dict]:
 
-
-    def split(self, text: str) -> list[str]:
         chunks = []
 
-        start = 0
+        chunk_id = 0
 
-        while start < len(text):
-            end = start + self.chunk_size
+        for page in pages:
 
-            chunk = text[start:end]
+            text = page["text"]
+            page_number = page["page_number"]
 
-            chunks.append(chunk)
+            start = 0
 
-            start = end - self.overlap
+            while start < len(text):
+
+                end = start + chunk_size
+
+                chunk_text = text[start:end]
+
+                chunks.append(
+                    {
+                        "chunk_id": chunk_id,
+                        "page_number": page_number,
+                        "text": chunk_text,
+                    }
+                )
+
+                chunk_id += 1
+
+                start += chunk_size - overlap
 
         return chunks
 

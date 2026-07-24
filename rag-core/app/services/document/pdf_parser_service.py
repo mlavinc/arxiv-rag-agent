@@ -3,24 +3,30 @@
 
 class PDFParserService:
     """
-    Extracts text content from PDF documents.
+    Extracts text content from PDF documents
+    while preserving page information.
     """
 
     def extract_text(self, file_path: str) -> dict:
+
         document = fitz.open(file_path)
 
-        pages_text = []
+        pages = []
 
-        for page in document:
-            pages_text.append(
-                page.get_text()
+        for index, page in enumerate(document):
+
+            pages.append(
+                {
+                    "page_number": index + 1,
+                    "text": page.get_text(),
+                }
             )
 
         document.close()
 
         return {
-            "text": "\n".join(pages_text),
-            "pages": len(pages_text),
+            "pages": pages,
+            "page_count": len(pages),
         }
 
 
