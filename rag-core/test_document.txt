@@ -1,0 +1,2 @@
+PyramidTNT is a transformer based object detector.
+It uses a pyramid architecture.

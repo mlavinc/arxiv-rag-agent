@@ -7,50 +7,71 @@ from app.services.vector_db.vector_db_service import vector_db_service
 class IngestionService:
     """
     Orchestrates the document ingestion pipeline.
+
+    Flow:
+    PDF
+      -> Text extraction
+      -> Chunking
+      -> Embeddings
+      -> Vector database
     """
 
     async def ingest_pdf(
         self,
         file_path: str,
         metadata: dict,
-    ):
+    ) -> dict:
 
-        # 1. Extract text
+        # 1. Extract text from document
         parsed = pdf_parser_service.extract_text(
             file_path
         )
 
-        # 2. Split into chunks
+        text = parsed["text"]
+
+        # 2. Split document into chunks
         chunks = chunking_service.split(
-            parsed["text"]
+            text
         )
 
-        # 3. Generate embeddings
         embeddings = []
 
+        # 3. Generate embeddings
         for chunk in chunks:
+
             embedding = await embeddings_service.embed(
                 chunk
             )
-            embeddings.append(embedding)
 
-        # 4. Prepare vector documents
-        document_id = metadata.get("document_id", "unknown")
+            embeddings.append(
+                embedding
+            )
 
+        document_id = metadata.get(
+            "document_id",
+            "unknown",
+        )
+
+        # 4. Prepare Chroma documents
         ids = [
-            f"{document_id}_chunk_{i}"
-            for i in range(len(chunks))
+            f"{document_id}_chunk_{index}"
+            for index in range(len(chunks))
         ]
 
+        document_title = metadata.get(
+            "title",
+            metadata.get("filename", document_id)
+        )
         metadatas = [
             {
                 **metadata,
-                "chunk_index": i,
+                "title": document_title,
+                "chunk_index": index,
             }
-            for i in range(len(chunks))
+            for index in range(len(chunks))
         ]
 
-        # 5. Store in vector database
+        # 5. Store vectors
         await vector_db_service.add_documents(
             ids=ids,
             documents=chunks,

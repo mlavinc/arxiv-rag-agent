@@ -86,6 +86,22 @@ class VectorDBService:
     async def count(self) -> int:
         return self.collection.count()
 
+    async def reset(self) -> None:
+        """
+        Deletes and recreates the vector collection.
+        Useful for development/testing.
+        """
+        try:
+            self.client.delete_collection(
+                name=settings.CHROMA_COLLECTION
+            )
+        except Exception:
+            pass
+        self.collection = self.client.get_or_create_collection(
+            name=settings.CHROMA_COLLECTION,
+            metadata={"hnsw:space": "cosine"},
+        )
+
     async def peek(self):
         results = self.collection.peek()
 
