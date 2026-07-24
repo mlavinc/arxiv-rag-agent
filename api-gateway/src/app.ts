@@ -5,6 +5,7 @@ import helmet from "helmet";
 import { env } from "./config/env";
 import { errorMiddleware } from "./middleware/error.middleware";
 import { requestLogger } from "./middleware/logger.middleware";
+import documentsRoutes from "./routes/documents.routes";
 import healthRoutes from "./routes/health.routes";
 import searchRoutes from "./routes/search.routes";
 
@@ -17,6 +18,7 @@ app.use(requestLogger);
 
 app.use(healthRoutes);
 app.use(searchRoutes);
+app.use(documentsRoutes);
 
 app.use(errorMiddleware);
 
