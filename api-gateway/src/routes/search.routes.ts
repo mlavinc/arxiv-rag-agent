@@ -1,2 +1,9 @@
-// Search route(s).
-// TODO: Define a POST /search endpoint that delegates to search.controller.
+import { Router } from "express";
+
+import { search } from "../controllers/search.controller";
+
+const router = Router();
+
+router.post("/api/search", search);
+
+export default router;

@@ -1,3 +1,15 @@
-// Types for the search endpoint.
-// TODO: Define the request payload shape (e.g. SearchRequest).
-// TODO: Define the response payload shape (e.g. SearchResponse, Source).
+export interface SearchRequestBody {
+  question: string;
+}
+
+export interface SearchSource {
+  document_id: string;
+  title: string;
+  chunk_index: number;
+  score: number;
+}
+
+export interface SearchResponseBody {
+  answer: string;
+  sources: SearchSource[];
+}

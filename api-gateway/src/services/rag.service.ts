@@ -1,3 +1,10 @@
-// RAG orchestration service.
-// TODO: Coordinate calls to the RAG Core client (rag-core.client).
-// TODO: Apply any Gateway-level transformation/validation before/after calling RAG Core.
+import { ragCoreClient } from "../clients/rag-core.client";
+import { SearchResponseBody } from "../types/search.types";
+
+async function search(question: string): Promise<SearchResponseBody> {
+  return ragCoreClient.search(question);
+}
+
+export const ragService = {
+  search,
+};
