@@ -1,23 +1,18 @@
 import { Request, Response } from "express";
 
 import { ragService } from "../services/rag.service";
+import { HttpError } from "../utils/http-error";
 import { SearchRequestBody } from "../types/search.types";
 
 export async function search(
-  req: Request<unknown, unknown, Partial<SearchRequestBody>>,
+  req: Request<unknown, unknown, SearchRequestBody>,
   res: Response
 ): Promise<void> {
   const { question } = req.body;
 
-  if (!question) {
-    res.status(400).json({ error: "question is required" });
-    return;
-  }
+  const result = await ragService.search(question).catch(() => {
+    throw new HttpError(503, "RAG Core unavailable");
+  });
 
-  try {
-    const result = await ragService.search(question);
-    res.json(result);
-  } catch (error) {
-    res.status(503).json({ error: "RAG Core unavailable" });
-  }
+  res.json(result);
 }
