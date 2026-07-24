@@ -1,52 +1,46 @@
 # API Gateway
 
-Puerta de entrada de la aplicación. Orquestación, validación y enrutamiento de requests.
+Este servicio es el **API Gateway** del proyecto ArXiv RAG Agent. Es el punto de entrada para clientes externos (frontend, herramientas, etc.) y se encarga de comunicar esas peticiones con el **RAG Core** (servicio Python + FastAPI), donde vive toda la lógica de RAG (embeddings, ChromaDB, LLM).
+
+```
+Usuario
+  ↓
+API Gateway (Node.js + TypeScript + Express)
+  ↓
+RAG Core (FastAPI)
+  ↓
+ChromaDB + Ollama
+```
+
+**Importante:** este servicio **no contiene lógica de RAG**. Solo valida, orquesta y reenvía solicitudes hacia el RAG Core. Toda la inteligencia (retrieval, embeddings, generación) permanece en Python.
 
 ## Stack
 
-- Node.js 18+
+- Node.js
+- TypeScript (strict mode)
 - Express
-- TypeScript
+- axios (cliente HTTP hacia RAG Core)
 
 ## Estructura de Carpetas
 
 ```
 src/
-├── routes/          # Definición de rutas Express (/api/v1/...)
-├── middleware/      # Middleware (error handling, logging, CORS, etc.)
-├── controllers/     # Orquestación de requests, llamadas a services
-├── services/        # Clientes HTTP para comunicarse con RAG Core
-├── types/           # TypeScript types e interfaces
-├── config/          # Configuración (variables de entorno, constantes)
-├── utils/           # Funciones auxiliares
-└── main.ts          # Punto de entrada
+├── index.ts             # Punto de entrada: arranca el servidor HTTP
+├── app.ts               # Configuración de la app Express (middleware, routers)
+├── routes/               # Definición de rutas Express
+├── controllers/          # Reciben el request, delegan a services
+├── services/              # Orquestación de la comunicación con RAG Core
+├── clients/               # Cliente HTTP hacia el servicio RAG Core (FastAPI)
+├── config/                # Configuración y variables de entorno
+└── types/                 # Tipos e interfaces de TypeScript
 ```
 
-## Responsabilidades
+## Scripts
 
-- **routes/**: Definir endpoints `/api/v1/...` (búsqueda, ingesta, etc.)
-- **middleware/**: Error handling, validación de inputs, logging, CORS
-- **controllers/**: Recibir request, validar datos, llamar services
-- **services/**: Abstracción para comunicarse con RAG Core (cliente HTTP)
-- **types/**: Interfaces de request/response
-- **config/**: Variables de entorno, puertos, URLs base del RAG Core
-- **utils/**: Funciones auxiliares (serialización, transformación)
+- `npm run dev` — levanta el servidor en modo desarrollo con recarga automática
+- `npm run build` — compila TypeScript a JavaScript (`dist/`)
+- `npm start` — ejecuta la versión compilada
 
-## Patrón Arquitectónico
+## Estado actual
 
-Este es un **API Gateway tipo "thin"**:
-- Valida inputs
-- Orquesta llamadas a servicios
-- Maneja errores
-- NO contiene lógica de negocio pesada (esa es responsabilidad de RAG Core)
-
-## Versioning de API
-
-Todos los endpoints respetan `/api/v1/...` para permitir versionado futuro.
-
-## Siguientes Pasos
-
-- [ ] Crear package.json
-- [ ] Configurar TypeScript
-- [ ] Crear .env.example
-- [ ] Definir estructura de error handling
+Sprint 6.1: solo estructura base creada. Sin lógica de negocio ni endpoints implementados todavía.
